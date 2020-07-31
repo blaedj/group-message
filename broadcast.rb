@@ -2,10 +2,8 @@ require 'json'
 require 'open-uri'
 require 'sinatra'
 require 'twilio-ruby'
-
 SPREADSHEET_ID = ENV['SPREADSHEET_ID']
 MY_NUMBER = ENV['MY_NUMBER']
-
 
 def spreadsheet_url
   "http://spreadsheets.google.com/feeds/list/#{SPREADSHEET_ID}/od6/public/values?alt=json"
@@ -43,10 +41,7 @@ def contact_name(number)
   parse_contacts[number]
 end
 
-
-
 post '/message' do
-  puts "INFO: #{params.inspect}"
   from = params['From']
   body = params['Body']
   media_url = params['MediaUrl0']
@@ -66,14 +61,12 @@ end
 def send_to_contacts(body, media_url = nil)
   response = Twilio::TwiML::Response.new do |r|
     contacts_phone_numbers.each do |num|
-      puts "INFO: creating message for #{num}"
       r.Message to: num do |msg|
         msg.Body body
         msg.Media media_url unless media_url.nil?
       end
     end
   end
-  puts "INFO: response text: #{response.text}"
   response.text
 end
 
